@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="S+I Daily">
+<meta name="theme-color" content="#1D3440">
+<title>Strategy + Impact — Daily</title>
+<style>
+@font-face { font-family:'Aptos'; src:local('Aptos'),local('Aptos-Regular'); font-weight:400; }
+@font-face { font-family:'Aptos'; src:local('Aptos Bold'),local('Aptos-Bold'); font-weight:700; }
+@font-face { font-family:'Aptos'; src:local('Aptos SemiBold'),local('Aptos-SemiBold'); font-weight:600; }
+:root {
+  --or:#F47A20; --nv:#1D3440; --tl:#5DBFB0;
+  --lt:#FEE9D5; --ltl:#E8F7F5;
+  --g1:#F5F5F5; --g2:#E8E8E8; --g3:#CCCCCC; --g4:#707070;
+  --bk:#2C2C2C; --wh:#ffffff;
+  --f:'Aptos',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--g1);font-family:var(--f);color:var(--bk);-webkit-font-smoothing:antialiased}
+
+/* ── HEADER ── */
+.hdr{background:var(--nv);height:46px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;border-bottom:2px solid var(--or)}
+.logo{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--wh)}
+.logo b{color:var(--or)}
+.hdate{font-size:10px;font-weight:600;color:rgba(255,255,255,.35)}
+
+/* ── QUOTE ── */
+.qstrip{background:var(--nv);padding:11px 16px 13px;border-bottom:1px solid rgba(93,191,176,.2)}
+.qstrip-inner{max-width:640px;margin:0 auto}
+.qlabel{font-size:8px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--tl);margin-bottom:5px}
+.qtext{font-size:.8rem;font-style:italic;color:rgba(255,255,255,.7);line-height:1.5}
+.qattr{font-size:.7rem;color:rgba(255,255,255,.3);margin-top:3px}
+
+/* ── PROGRESS (actions only) ── */
+.prog{background:var(--wh);border-bottom:1px solid var(--g2);padding:10px 16px}
+.prog-inner{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.prog-lbl{font-size:.7rem;font-weight:600;color:var(--g4);white-space:nowrap}
+.prog-lbl b{color:var(--or)}
+.prog-track{flex:1;height:4px;background:var(--g2);border-radius:100px;overflow:hidden}
+.prog-fill{height:100%;background:var(--or);border-radius:100px;transition:width .4s ease;width:0%}
+.prog-fill.all{background:var(--tl)}
+
+/* ── TAB SWITCHER ── */
+.tabs{background:var(--wh);border-bottom:2px solid var(--g2);display:flex;max-width:100%;position:sticky;top:46px;z-index:100}
+.tab{flex:1;font-family:var(--f);font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:12px 10px;border:none;background:none;cursor:pointer;color:var(--g4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .18s}
+.tab.on{color:var(--or);border-bottom-color:var(--or)}
+
+/* ── PANELS ── */
+.panel{display:none}
+.panel.active{display:block}
+.wrap{max-width:640px;margin:0 auto;padding:14px 12px 40px}
+
+/* ── SECTION LABEL ── */
+.sl{font-size:8px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g4);margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.sl::after{content:'';flex:1;height:1px;background:var(--g2)}
+.sl:first-child{margin-top:0}
+.sl-n{font-size:8px;font-weight:700;color:var(--or);background:rgba(244,122,32,.1);padding:2px 7px;border-radius:8px}
+
+/* ── CARD ── */
+.card{background:var(--wh);border:1px solid var(--g2);border-radius:6px;margin-bottom:7px;overflow:hidden;transition:border-color .2s}
+.card.done{border-color:var(--tl);background:var(--ltl)}
+.ch{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer}
+.cb{width:22px;height:22px;min-width:22px;border:1.5px solid var(--g3);border-radius:5px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.card.done .cb{background:var(--tl);border-color:var(--tl)}
+.ck{font-size:12px;color:transparent;font-weight:700;line-height:1}
+.card.done .ck{color:var(--wh)}
+.ct{flex:1;min-width:0}
+.ct-title{font-size:.82rem;font-weight:700;color:var(--nv);line-height:1.3;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.card.done .ct-title{color:var(--tl);text-decoration:line-through;text-decoration-color:rgba(93,191,176,.5)}
+.ct-sub{font-size:.68rem;color:var(--g4);margin-top:2px;line-height:1.4}
+
+/* ── DAY BADGE ── */
+.dbadge{font-size:8px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:8px}
+.dbadge.post{background:var(--lt);color:var(--or)}
+.dbadge.engage{background:var(--ltl);color:var(--tl)}
+
+/* ── CHIPS ── */
+.chips{display:flex;flex-wrap:wrap;gap:5px;padding:0 14px 12px}
+.chip{font-size:.65rem;font-weight:700;color:var(--nv);background:var(--lt);border:1px solid rgba(244,122,32,.2);border-radius:3px;padding:4px 9px;text-decoration:none;white-space:nowrap;transition:all .15s}
+.chip:active,.chip:hover{background:var(--or);color:var(--wh);border-color:var(--or)}
+.chip.tl{background:var(--ltl);color:#1d6060;border-color:rgba(93,191,176,.3)}
+.chip.tl:active,.chip.tl:hover{background:var(--tl);color:var(--wh);border-color:var(--tl)}
+
+/* ── DIVIDER ── */
+.div{border-top:1px solid var(--g2)}
+.card.done .div{border-color:rgba(93,191,176,.25)}
+
+/* ── SUBTASKS ── */
+.stasks{padding:2px 14px 4px}
+.st{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--g1);cursor:pointer}
+.st:last-child{border-bottom:none}
+.scb{width:18px;height:18px;min-width:18px;border:1.5px solid var(--g3);border-radius:3px;display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0}
+.st.done .scb{background:var(--tl);border-color:var(--tl)}
+.sk{font-size:10px;color:transparent}
+.st.done .sk{color:var(--wh)}
+.sl2{font-size:.75rem;font-weight:500;color:var(--bk)}
+.st.done .sl2{text-decoration:line-through;color:var(--g4)}
+
+/* ── NOTE ── */
+.note-wrap{padding:4px 14px 12px}
+.nlbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--g4);margin-bottom:5px;margin-top:8px}
+.nfield{width:100%;font-family:var(--f);font-size:.75rem;color:var(--bk);background:var(--g1);border:1px solid var(--g2);border-radius:4px;padding:8px 10px;resize:none;outline:none;min-height:54px;line-height:1.5;transition:border-color .2s}
+.nfield:focus{border-color:var(--tl);background:var(--wh)}
+.nfield::placeholder{color:var(--g3)}
+
+/* ── PIPELINE LINK ── */
+.pl-link{display:flex;align-items:center;gap:7px;padding:10px 14px;font-size:.72rem;font-weight:600;color:var(--g4);text-decoration:none;transition:color .15s}
+.pl-link:hover,.pl-link:active{color:var(--or)}
+
+/* ── ALL DONE ── */
+.alldone{background:var(--tl);color:var(--wh);text-align:center;padding:14px;border-radius:6px;font-weight:700;font-size:.82rem;line-height:1.5;display:none;margin-bottom:7px}
+.alldone.show{display:block}
+.alldone span{font-weight:400;font-size:.73rem;opacity:.85;display:block;margin-top:2px}
+
+/* ── RESET/EXPORT ── */
+.resetrow{text-align:center;margin-top:16px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.exportbtn{font-family:var(--f);font-size:.72rem;font-weight:700;color:var(--wh);background:var(--nv);border:none;border-radius:4px;padding:9px 20px;cursor:pointer;transition:background .15s}
+.exportbtn:hover{background:var(--or)}
+.resetbtn{font-family:var(--f);font-size:.68rem;font-weight:600;color:var(--g3);background:none;border:none;cursor:pointer;padding:6px 10px;transition:color .15s}
+.resetbtn:hover{color:var(--or)}
+
+/* ── PROSPECTS ── */
+.search-box{width:100%;font-family:var(--f);font-size:.82rem;padding:11px 13px;border:1.5px solid var(--g2);border-radius:5px;background:var(--wh);color:var(--bk);outline:none;margin-bottom:10px;transition:border-color .2s}
+.search-box:focus{border-color:var(--tl)}
+.filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.fb{font-family:var(--f);font-size:8px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:6px 13px;border:1.5px solid var(--g2);background:var(--wh);color:var(--g4);border-radius:20px;cursor:pointer;transition:all .15s}
+.fb.on{background:var(--nv);border-color:var(--nv);color:var(--wh)}
+.fb.fhot.on{background:var(--or);border-color:var(--or)}
+.fb.fwarm.on{background:#b8860a;border-color:#b8860a}
+.clist{display:flex;flex-direction:column;gap:6px}
+
+/* ── CONTACT CARD ── */
+.cc{background:var(--wh);border:1px solid var(--g2);border-left:3px solid var(--g2);border-radius:5px;padding:13px 14px}
+.cc.hot{border-left-color:var(--or)}
+.cc.warm{border-left-color:#b8860a}
+.cc.cold{border-left-color:var(--g3)}
+.cc.parked{border-left-color:var(--g2);opacity:.5}
+.cc-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:2px}
+.cc-name{font-size:.85rem;font-weight:700;color:var(--nv);line-height:1.2}
+.cc-badge{font-size:7px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:8px;flex-shrink:0;margin-top:2px}
+.b-hot{background:rgba(244,122,32,.12);color:var(--or)}
+.b-warm{background:rgba(184,134,10,.12);color:#b8860a}
+.b-cold{background:var(--g1);color:var(--g4)}
+.b-parked{background:var(--g1);color:var(--g3)}
+.cc-sub{font-size:.68rem;color:var(--g4);margin-bottom:7px}
+.cc-next{font-size:.72rem;color:var(--or);font-weight:600;line-height:1.4}
+.cc-next::before{content:"→  "}
+.cc-hist{font-size:.68rem;color:var(--g4);line-height:1.5;margin-top:7px;padding-top:7px;border-top:1px solid var(--g2)}
+
+/* ── SYNC DOT ── */
+.sync{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.15);transition:background .4s;margin-left:8px;display:inline-block;flex-shrink:0}
+.sync.ok{background:#1a6b35}
+.sync.busy{background:var(--or);animation:blink 1s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── MSG / ERR ── */
+.msg{padding:20px 14px;text-align:center;font-size:.78rem;color:var(--g4);background:var(--wh);border-radius:5px;border:1px solid var(--g2)}
+.err{padding:14px;background:#fff8f4;border:1px solid rgba(244,122,32,.3);border-radius:5px;font-size:.73rem;color:var(--bk);line-height:1.7}
+.err b{color:var(--or);display:block;margin-bottom:6px;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase}
+.err-detail{font-size:.65rem;color:var(--g4);margin-top:6px;word-break:break-all}
+.rbtn{margin-top:10px;display:inline-block;font-family:var(--f);font-size:.7rem;font-weight:700;color:var(--wh);background:var(--or);border:none;border-radius:3px;padding:8px 16px;cursor:pointer}
+.gs-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px;background:var(--wh);border:1px solid var(--g2);font-size:.72rem;font-weight:600;color:var(--g4);text-decoration:none;margin-top:10px;border-radius:5px;transition:all .2s}
+.gs-btn:active,.gs-btn:hover{border-color:var(--or);color:var(--or)}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="logo">Strategy <b>+</b> Impact</div>
+  <div style="display:flex;align-items:center">
+    <div class="hdate" id="hdate"></div>
+    <div class="sync" id="syncDot"></div>
+  </div>
+</div>
+
+<!-- QUOTE -->
+<div class="qstrip">
+  <div class="qstrip-inner">
+    <div class="qlabel">✦ Today's prompt</div>
+    <div class="qtext" id="qtext"></div>
+    <div class="qattr" id="qattr"></div>
+  </div>
+</div>
+
+<!-- PROGRESS (actions only) -->
+<div class="prog" id="progBar">
+  <div class="prog-inner">
+    <div class="prog-lbl"><b id="progN">0</b> of 5 complete</div>
+    <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+  </div>
+</div>
+
+<!-- TAB SWITCHER -->
+<div class="tabs">
+  <button class="tab on" id="tab-actions"   onclick="showTab('actions')">&#9989; Actions</button>
+  <button class="tab"    id="tab-prospects" onclick="showTab('prospects')">&#11088; Prospects</button>
+</div>
+
+<!-- ── ACTIONS PANEL ────────────────────────────────────────────── -->
+<div class="panel active" id="panel-actions">
+<div class="wrap">
+
+  <div class="alldone" id="alldone">
+    ✓ All done — great prospecting day, Natalie!
+    <span>Come back tomorrow for a fresh checklist.</span>
+  </div>
+
+  <div class="sl">Daily checklist</div>
+
+  <!-- Intention -->
+  <div class="card" id="c-intention" onclick="toggleCard('intention')">
+    <div class="ch">
+      <div class="cb"><span class="ck">✓</span></div>
+      <div class="ct">
+        <div class="ct-title">Set your intention</div>
+        <div class="ct-sub">Read today's prompt. Decide your one key win for the day.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- News -->
+  <div class="card" id="c-news" onclick="toggleCard('news')">
+    <div class="ch">
+      <div class="cb"><span class="ck">✓</span></div>
+      <div class="ct">
+        <div class="ct-title">Scan industry news</div>
+        <div class="ct-sub">Spot opportunities and conversation starters in your sectors.</div>
+      </div>
+    </div>
+    <div class="chips" onclick="event.stopPropagation()">
+      <a class="chip" href="https://www.insidehousing.co.uk" target="_blank" rel="noopener">Inside Housing</a>
+      <a class="chip" href="https://www.hsj.co.uk" target="_blank" rel="noopener">HSJ</a>
+      <a class="chip" href="https://www.themj.co.uk" target="_blank" rel="noopener">The MJ</a>
+      <a class="chip" href="https://www.edie.net" target="_blank" rel="noopener">EDIE</a>
+      <a class="chip" href="https://www.publicfinance.co.uk" target="_blank" rel="noopener">Public Finance</a>
+      <a class="chip" href="https://www.civilserviceworld.com" target="_blank" rel="noopener">Civil Service World</a>
+    </div>
+  </div>
+
+  <!-- LinkedIn -->
+  <div class="card" id="c-linkedin">
+    <div class="ch" onclick="toggleCard('linkedin')">
+      <div class="cb"><span class="ck">✓</span></div>
+      <div class="ct">
+        <div class="ct-title">LinkedIn <span class="dbadge" id="liday"></span></div>
+        <div class="ct-sub" id="lisub"></div>
+      </div>
+    </div>
+    <div class="div"></div>
+    <div class="stasks" onclick="event.stopPropagation()">
+      <div class="st" id="s-li-post"     onclick="toggleSub('linkedin','post')">    <div class="scb"><span class="sk">✓</span></div><div class="sl2" id="li-post-lbl">Post or share content</div></div>
+      <div class="st" id="s-li-comment"  onclick="toggleSub('linkedin','comment')"> <div class="scb"><span class="sk">✓</span></div><div class="sl2">Comment on 3 relevant posts</div></div>
+      <div class="st" id="s-li-connect"  onclick="toggleSub('linkedin','connect')"> <div class="scb"><span class="sk">✓</span></div><div class="sl2">Send 2 connection requests</div></div>
+      <div class="st" id="s-li-messages" onclick="toggleSub('linkedin','messages')"><div class="scb"><span class="sk">✓</span></div><div class="sl2">Check and respond to messages</div></div>
+    </div>
+    <div class="chips" onclick="event.stopPropagation()">
+      <a class="chip tl" href="https://www.linkedin.com/feed/" target="_blank" rel="noopener">Open LinkedIn →</a>
+    </div>
+  </div>
+
+  <!-- Outreach -->
+  <div class="card" id="c-outreach">
+    <div class="ch" onclick="toggleCard('outreach')">
+      <div class="cb"><span class="ck">✓</span></div>
+      <div class="ct">
+        <div class="ct-title">Outreach &amp; follow-ups</div>
+        <div class="ct-sub">Every follow-up moves the pipeline forward.</div>
+      </div>
+    </div>
+    <div class="div"></div>
+    <div class="stasks" onclick="event.stopPropagation()">
+      <div class="st" id="s-or-warm"  onclick="toggleSub('outreach','warm')"> <div class="scb"><span class="sk">✓</span></div><div class="sl2">Follow up with a warm lead</div></div>
+      <div class="st" id="s-or-brief" onclick="toggleSub('outreach','brief')"><div class="scb"><span class="sk">✓</span></div><div class="sl2">Follow up on a brief or proposal</div></div>
+      <div class="st" id="s-or-cold"  onclick="toggleSub('outreach','cold')"> <div class="scb"><span class="sk">✓</span></div><div class="sl2">Make one new outreach contact</div></div>
+    </div>
+    <div class="note-wrap" onclick="event.stopPropagation()">
+      <div class="nlbl">Who did you contact?</div>
+      <textarea class="nfield" id="or-note" placeholder="e.g. Jane Smith @ Clarion — followed up on March brief…" oninput="saveNote(this.value)"></textarea>
+    </div>
+  </div>
+
+  <!-- Pipeline -->
+  <div class="card" id="c-pipeline">
+    <div class="ch" onclick="toggleCard('pipeline')">
+      <div class="cb"><span class="ck">✓</span></div>
+      <div class="ct">
+        <div class="ct-title">Pipeline review</div>
+        <div class="ct-sub">Your pipeline reflects activity from 90 days ago. Keep it current.</div>
+      </div>
+    </div>
+    <div class="div"></div>
+    <div class="stasks" onclick="event.stopPropagation()">
+      <div class="st" id="s-pl-hot"    onclick="toggleSub('pipeline','hot')">   <div class="scb"><span class="sk">✓</span></div><div class="sl2">Review hot prospects — any action needed?</div></div>
+      <div class="st" id="s-pl-update" onclick="toggleSub('pipeline','update')"><div class="scb"><span class="sk">✓</span></div><div class="sl2">Update pipeline status for new developments</div></div>
+    </div>
+    <div class="pl-link" onclick="showTab('prospects');event.stopPropagation()" style="cursor:pointer">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      View your pipeline →
+    </div>
+  </div>
+
+  <div class="resetrow">
+    <button class="exportbtn" onclick="exportLog()">↓ Save today's log</button>
+    <button class="resetbtn" onclick="doReset()">Reset today</button>
+  </div>
+
+</div>
+</div><!-- /actions panel -->
+
+<!-- ── PROSPECTS PANEL ────────────────────────────────────────────── -->
+<div class="panel" id="panel-prospects">
+<div class="wrap">
+  <div class="sl">Pipeline <span class="sl-n" id="cCount"></span></div>
+  <input class="search-box" id="cSearch" type="search" placeholder="Search name or organisation…" oninput="filterC()">
+  <div class="filters">
+    <button class="fb on"    id="fb-all"    onclick="setF('all')">All</button>
+    <button class="fb fhot"  id="fb-hot"    onclick="setF('hot')">Hot</button>
+    <button class="fb fwarm" id="fb-warm"   onclick="setF('warm')">Warm</button>
+    <button class="fb"       id="fb-cold"   onclick="setF('cold')">Cold</button>
+    <button class="fb"       id="fb-parked" onclick="setF('parked')">Parked</button>
+  </div>
+  <div class="clist" id="cList"><div class="msg">Loading contacts…</div></div>
+  <a class="gs-btn" href="https://docs.google.com/spreadsheets/d/12iRhnjYCYeLHc7onX7HRdwjeDpNjIFjDWoJgRgSiu64/edit#gid=812606877" target="_blank" rel="noopener">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Edit pipeline in Google Sheets
+  </a>
+</div>
+</div><!-- /prospects panel -->
+
+<script>
+/* ── QUOTES ── */
+var QUOTES=[
+  {q:"The fortune is in the follow-up.",a:"Jim Rohn"},
+  {q:"Show up. Do the work. That\u2019s the whole strategy.",a:""},
+  {q:"Consistency builds trust. Trust builds business.",a:""},
+  {q:"Your pipeline reflects the activity from 90 days ago. Plant seeds today.",a:""},
+  {q:"People don\u2019t buy what you do; they buy why you do it.",a:"Simon Sinek"},
+  {q:"Be the person people want to refer.",a:""},
+  {q:"Visibility creates opportunity.",a:""},
+  {q:"The best business development happens in conversations, not pitches.",a:""},
+  {q:"Your network is your net worth.",a:"Porter Gale"},
+  {q:"One follow-up email often changes everything.",a:""},
+  {q:"Done is better than perfect. Send the message.",a:""},
+  {q:"Show up in people\u2019s feeds before you show up in their inbox.",a:""},
+  {q:"Reputation is built one conversation at a time.",a:""},
+  {q:"The deal you don\u2019t pitch is the deal you don\u2019t win.",a:""},
+  {q:"The secret of getting ahead is getting started.",a:"Mark Twain"},
+  {q:"Every no gets me closer to a yes.",a:""},
+  {q:"Relationships are the currency of business.",a:""},
+  {q:"Your LinkedIn is your shop window. Keep it open.",a:""},
+  {q:"A warm lead beats cold outreach every time. Stay warm.",a:""},
+  {q:"Consistency is more important than perfection.",a:""},
+  {q:"Don\u2019t count the days, make the days count.",a:"Muhammad Ali"},
+  {q:"Small daily improvements lead to staggering long-term results.",a:""},
+  {q:"The meeting that doesn\u2019t happen is the deal that doesn\u2019t close.",a:""},
+  {q:"Success is not final, failure is not fatal: it is the courage to continue that counts.",a:"Winston Churchill"},
+  {q:"Do the thing and you shall have the power.",a:"Ralph Waldo Emerson"},
+  {q:"Every expert was once a beginner.",a:""},
+  {q:"Chase the vision, not the money; the money will end up following you.",a:"Tony Hsieh"}
+];
+
+/* ── DATE ── */
+var DAYS  =['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var now   = new Date();
+var TODAY = now.toISOString().slice(0,10);
+
+/* ── STORAGE ── */
+function sk(k){return 'si7_'+k+'_'+TODAY;}
+function sg(k){try{return JSON.parse(localStorage.getItem(sk(k)));}catch(e){return null;}}
+function ss(k,v){try{localStorage.setItem(sk(k),JSON.stringify(v));}catch(e){}}
+
+/* ── STATE ── */
+var cards = sg('cards')||{};
+var subs  = sg('subs') ||{};
+var note  = sg('note') ||'';
+var SUB_MAP={linkedin:['post','comment','connect','messages'],outreach:['warm','brief','cold'],pipeline:['hot','update']};
+var ABBREV={linkedin:'li',outreach:'or',pipeline:'pl'};
+var CARD_IDS=['intention','news','linkedin','outreach','pipeline'];
+
+/* ── TABS ── */
+function showTab(t){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('panel-'+t).classList.add('active');
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('tab-'+t).classList.add('on');
+  document.getElementById('progBar').style.display = t==='actions'?'block':'none';
+  window.scrollTo(0,0);
+  if(t==='prospects' && !contactsLoaded) loadContacts();
+}
+
+/* ── ACTIONS ── */
+function toggleCard(id){
+  cards[id]=!cards[id];
+  var sl=SUB_MAP[id];
+  if(sl) sl.forEach(function(s){subs[id+'_'+s]=!!cards[id];});
+  ss('cards',cards); ss('subs',subs); render();
+}
+function toggleSub(cid,sid){
+  subs[cid+'_'+sid]=!subs[cid+'_'+sid];
+  var sl=SUB_MAP[cid];
+  if(sl) cards[cid]=sl.every(function(s){return subs[cid+'_'+s];});
+  ss('cards',cards); ss('subs',subs); render();
+}
+function saveNote(v){note=v; ss('note',note);}
+
+function render(){
+  var done=0;
+  CARD_IDS.forEach(function(id){
+    var el=document.getElementById('c-'+id);
+    if(cards[id]){el.classList.add('done');done++;}
+    else el.classList.remove('done');
+  });
+  Object.keys(SUB_MAP).forEach(function(cid){
+    SUB_MAP[cid].forEach(function(sid){
+      var el=document.getElementById('s-'+ABBREV[cid]+'-'+sid);
+      if(!el) return;
+      if(subs[cid+'_'+sid]) el.classList.add('done');
+      else el.classList.remove('done');
+    });
+  });
+  var nf=document.getElementById('or-note');
+  if(nf && nf.value!==note) nf.value=note;
+  var pct=Math.round(done/CARD_IDS.length*100);
+  document.getElementById('progN').textContent=done;
+  var fill=document.getElementById('progFill');
+  fill.style.width=pct+'%';
+  if(pct===100) fill.classList.add('all'); else fill.classList.remove('all');
+  var ad=document.getElementById('alldone');
+  if(done===CARD_IDS.length) ad.classList.add('show'); else ad.classList.remove('show');
+}
+
+function doReset(){
+  if(!confirm('Reset all ticks for today?')) return;
+  cards={}; subs={}; note='';
+  ss('cards',cards); ss('subs',subs); ss('note',note);
+  document.getElementById('or-note').value='';
+  render();
+}
+
+function exportLog(){
+  var LABELS={intention:'Set your intention',news:'Scan industry news',linkedin:'LinkedIn',outreach:'Outreach & follow-ups',pipeline:'Pipeline review'};
+  var SLABELS={linkedin_post:'Post or share content',linkedin_comment:'Comment on 3 posts',linkedin_connect:'Send 2 connection requests',linkedin_messages:'Check messages',outreach_warm:'Follow up warm lead',outreach_brief:'Follow up on brief',outreach_cold:'New outreach contact',pipeline_hot:'Review hot prospects',pipeline_update:'Update pipeline status'};
+  var lines=['STRATEGY + IMPACT \u2014 DAILY NEW BUSINESS LOG',DAYS[now.getDay()]+' '+now.getDate()+' '+MONTHS[now.getMonth()]+' '+now.getFullYear(),'','CHECKLIST','\u2500'.repeat(42)];
+  CARD_IDS.forEach(function(id){
+    lines.push((cards[id]?'[\u2713]':'[ ]')+' '+LABELS[id]);
+    if(SUB_MAP[id]) SUB_MAP[id].forEach(function(sid){lines.push('  '+(subs[id+'_'+sid]?'[\u2713]':'[ ]')+' '+SLABELS[id+'_'+sid]);});
+  });
+  if(note&&note.trim()){lines.push('','OUTREACH NOTES','\u2500'.repeat(42),note.trim());}
+  lines.push('','\u2500'.repeat(42),'Strategy+Impact Daily Builder');
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/plain'}));
+  a.download=TODAY+' S+I Daily.txt';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
+}
+
+/* ── PROSPECTS ── */
+var allC=[],activeF='all',searchQ='',contactsLoaded=false;
+
+function loadContacts(){
+  var cached=sg('contacts');
+  if(cached&&cached.length){
+    allC=cached; renderC();
+    /* background refresh */
+    fetch('/api/contacts').then(function(r){return r.json();}).then(function(j){
+      if(j.rows&&j.rows.length){allC=j.rows;ss('contacts',allC);setSyncDot('ok');renderC();}
+    }).catch(function(){});
+    contactsLoaded=true; return;
+  }
+  setSyncDot('busy');
+  fetch('/api/contacts')
+    .then(function(r){
+      if(!r.ok) return r.json().then(function(e){throw new Error(e.error||'Server error '+r.status);});
+      return r.json();
+    })
+    .then(function(j){
+      if(!j.rows) throw new Error('No data returned from server.');
+      allC=j.rows; ss('contacts',allC); setSyncDot('ok'); renderC(); contactsLoaded=true;
+    })
+    .catch(function(err){setSyncDot('');showErr(err.message);});
+}
+
+function showErr(msg){
+  document.getElementById('cList').innerHTML=
+    '<div class="err"><b>Contacts could not load</b>'
+    +'Check that the Google service account has been set up and the sheet has been shared with it.<br>'
+    +'<span class="err-detail">'+esc(msg)+'</span><br>'
+    +'<button class="rbtn" onclick="retryC()">Try again</button></div>';
+}
+function retryC(){
+  try{localStorage.removeItem(sk('contacts'));}catch(e){}
+  contactsLoaded=false;
+  document.getElementById('cList').innerHTML='<div class="msg">Loading\u2026</div>';
+  loadContacts();
+}
+function setF(f){activeF=f;document.querySelectorAll('.fb').forEach(function(b){b.classList.remove('on');});document.getElementById('fb-'+f).classList.add('on');renderC();}
+function filterC(){searchQ=document.getElementById('cSearch').value.toLowerCase().trim();renderC();}
+function sOrder(s){var m={hot:0,warm:1,cold:2,parked:3},k=(s||'cold').toLowerCase();return k in m?m[k]:2;}
+function renderC(){
+  var list=allC;
+  if(activeF!=='all') list=list.filter(function(c){return(c.s||'').toLowerCase()===activeF;});
+  if(searchQ) list=list.filter(function(c){return(c.n||'').toLowerCase().indexOf(searchQ)>=0||(c.o||'').toLowerCase().indexOf(searchQ)>=0||(c.r||'').toLowerCase().indexOf(searchQ)>=0;});
+  list=list.slice().sort(function(a,b){return sOrder(a.s)-sOrder(b.s);});
+  document.getElementById('cCount').textContent=list.length;
+  if(!list.length){document.getElementById('cList').innerHTML='<div class="msg">No contacts match.</div>';return;}
+  document.getElementById('cList').innerHTML=list.map(function(c){
+    var s=(c.s||'cold').toLowerCase();
+    var sub=[c.r,c.o].filter(Boolean).map(esc).join(' \u00b7 ');
+    return '<div class="cc '+s+'">'
+      +'<div class="cc-row"><div class="cc-name">'+esc(c.n||'(No name)')+'</div><div class="cc-badge b-'+s+'">'+s+'</div></div>'
+      +(sub?'<div class="cc-sub">'+sub+'</div>':'')
+      +(c.x?'<div class="cc-next">'+esc(c.x)+'</div>':'')
+      +(c.h?'<div class="cc-hist">'+esc(c.h)+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+function setSyncDot(s){document.getElementById('syncDot').className='sync'+(s?' '+s:'');}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* ── INIT ── */
+document.getElementById('hdate').textContent=DAYS[now.getDay()]+' '+now.getDate()+' '+MONTHS[now.getMonth()];
+(function(){var doy=Math.floor((now-new Date(now.getFullYear(),0,0))/86400000);var q=QUOTES[doy%QUOTES.length];document.getElementById('qtext').textContent='\u201C'+q.q+'\u201D';document.getElementById('qattr').textContent=q.a?'\u2014 '+q.a:'';}());
+(function(){var d=now.getDay(),badge=document.getElementById('liday'),sub=document.getElementById('lisub'),lbl=document.getElementById('li-post-lbl');if(d===1||d===4){badge.textContent='Post day';badge.className='dbadge post';sub.textContent='Today is a posting day \u2014 write and share something valuable.';if(lbl)lbl.textContent='Write and post content today';}else{badge.textContent='Engage';badge.className='dbadge engage';sub.textContent='Engage with your network \u2014 comment, connect, and respond.';}})();
+render();
+</script>
+</body>
+</html>
