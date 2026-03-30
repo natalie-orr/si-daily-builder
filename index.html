@@ -399,15 +399,15 @@ function toggleCard(id){
   cards[id]=!cards[id];
   var sl=SUB_MAP[id];
   if(sl) sl.forEach(function(s){subs[id+'_'+s]=!!cards[id];});
-  ss('cards',cards); ss('subs',subs); render();
+  ss('cards',cards); ss('subs',subs); render(); syncToServer();
 }
 function toggleSub(cid,sid){
   subs[cid+'_'+sid]=!subs[cid+'_'+sid];
   var sl=SUB_MAP[cid];
   if(sl) cards[cid]=sl.every(function(s){return subs[cid+'_'+s];});
-  ss('cards',cards); ss('subs',subs); render();
+  ss('cards',cards); ss('subs',subs); render(); syncToServer();
 }
-function saveNote(v){note=v; ss('note',note);}
+function saveNote(v){note=v; ss('note',note); syncToServer();}
 
 function render(){
   var done=0;
@@ -440,7 +440,39 @@ function doReset(){
   cards={}; subs={}; note='';
   ss('cards',cards); ss('subs',subs); ss('note',note);
   document.getElementById('or-note').value='';
-  render();
+  render(); syncToServer();
+}
+
+/* ── SERVER SYNC (cross-device) ── */
+var syncTimer=null;
+function syncToServer(){
+  clearTimeout(syncTimer);
+  syncTimer=setTimeout(function(){
+    fetch('/api/state',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({cards:cards,subs:subs,note:note})
+    }).catch(function(){});
+  },400);
+}
+
+function loadFromServer(){
+  fetch('/api/state')
+    .then(function(r){return r.json();})
+    .then(function(remote){
+      /* OR-merge: if either device ticked it, keep it ticked */
+      Object.keys(remote.cards||{}).forEach(function(k){if(remote.cards[k]) cards[k]=true;});
+      Object.keys(remote.subs||{}).forEach(function(k){if(remote.subs[k]) subs[k]=true;});
+      /* Keep whichever note is longer */
+      if((remote.note||'').length>(note||'').length){
+        note=remote.note;
+        var nf=document.getElementById('or-note');
+        if(nf) nf.value=note;
+      }
+      ss('cards',cards); ss('subs',subs); ss('note',note);
+      render();
+    })
+    .catch(function(){}); /* silent fail — works offline too */
 }
 
 function exportLog(){
@@ -527,6 +559,7 @@ document.getElementById('hdate').textContent=DAYS[now.getDay()]+' '+now.getDate(
 (function(){var doy=Math.floor((now-new Date(now.getFullYear(),0,0))/86400000);var q=QUOTES[doy%QUOTES.length];document.getElementById('qtext').textContent='\u201C'+q.q+'\u201D';document.getElementById('qattr').textContent=q.a?'\u2014 '+q.a:'';}());
 (function(){var d=now.getDay(),badge=document.getElementById('liday'),sub=document.getElementById('lisub'),lbl=document.getElementById('li-post-lbl');if(d===1||d===4){badge.textContent='Post day';badge.className='dbadge post';sub.textContent='Today is a posting day \u2014 write and share something valuable.';if(lbl)lbl.textContent='Write and post content today';}else{badge.textContent='Engage';badge.className='dbadge engage';sub.textContent='Engage with your network \u2014 comment, connect, and respond.';}})();
 render();
+loadFromServer();
 </script>
 </body>
 </html>
