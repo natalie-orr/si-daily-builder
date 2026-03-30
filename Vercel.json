@@ -1,5 +1,5 @@
 {
-  "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
-  ]
+  "name": "si-daily-builder",
+  "version": "1.0.0",
+  "private": true
 }
