@@ -560,6 +560,6 @@ document.getElementById('hdate').textContent=DAYS[now.getDay()]+' '+now.getDate(
 (function(){var d=now.getDay(),badge=document.getElementById('liday'),sub=document.getElementById('lisub'),lbl=document.getElementById('li-post-lbl');if(d===1||d===4){badge.textContent='Post day';badge.className='dbadge post';sub.textContent='Today is a posting day \u2014 write and share something valuable.';if(lbl)lbl.textContent='Write and post content today';}else{badge.textContent='Engage';badge.className='dbadge engage';sub.textContent='Engage with your network \u2014 comment, connect, and respond.';}})();
 render();
 loadFromServer();
+/* Poll every 30s so any open device picks up changes from other devices */
+setInterval(loadFromServer, 30000);
 </script>
-</body>
-</html>
