@@ -3,3 +3,10 @@
   "version": "1.0.0",
   "private": true
 }
+```
+
+---
+
+Once committed, wait for Vercel to redeploy then visit:
+```
+https://si-daily-builder-natalie-orrs-projects.vercel.app/api/state
