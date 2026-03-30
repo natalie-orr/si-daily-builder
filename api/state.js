@@ -1,17 +1,38 @@
-const KV_URL   = process.env.KV_REST_API_URL;
-const KV_TOKEN = process.env.KV_REST_API_TOKEN;
+function getKV() {
+  const raw = process.env.KV_REST_API_URL
+    ? { url: process.env.KV_REST_API_URL, token: process.env.KV_REST_API_TOKEN }
+    : null;
+  if (raw) return raw;
+
+  const redisUrl = process.env.REDIS_URL;
+  if (!redisUrl) return null;
+
+  try {
+    const u = new URL(redisUrl);
+    const restUrl = `https://${u.hostname}`;
+    const token   = u.password;
+    return { url: restUrl, token };
+  } catch (e) {
+    return null;
+  }
+}
 
 async function redis(cmd) {
-  if (!KV_URL || !KV_TOKEN) throw new Error('KV_NOT_CONFIGURED');
-  const r = await fetch(KV_URL, {
+  const kv = getKV();
+  if (!kv || !kv.url || !kv.token) throw new Error('KV_NOT_CONFIGURED');
+
+  const r = await fetch(kv.url, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${KV_TOKEN}`,
+      'Authorization': `Bearer ${kv.token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(cmd),
   });
-  if (!r.ok) throw new Error(`KV HTTP ${r.status}`);
+  if (!r.ok) {
+    const text = await r.text();
+    throw new Error(`KV HTTP ${r.status}: ${text}`);
+  }
   const json = await r.json();
   return json.result;
 }
@@ -27,7 +48,7 @@ module.exports = async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      const raw = await redis(['GET', key]);
+      const raw   = await redis(['GET', key]);
       const state = raw ? JSON.parse(raw) : { cards: {}, subs: {}, note: '' };
       return res.json(state);
     }
@@ -44,7 +65,7 @@ module.exports = async function handler(req, res) {
 
   } catch (err) {
     if (err.message === 'KV_NOT_CONFIGURED') {
-      return res.status(500).json({ error: 'KV env vars missing — check Vercel Storage is connected and redeploy.' });
+      return res.status(500).json({ error: 'No Redis credentials found.' });
     }
     return res.status(500).json({ error: err.message });
   }
