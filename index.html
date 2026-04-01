@@ -23,10 +23,10 @@
 html,body{background:var(--g1);font-family:var(--f);color:var(--bk);-webkit-font-smoothing:antialiased}
 
 /* ── HEADER ── */
-.hdr{background:var(--nv);height:46px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;border-bottom:2px solid var(--or)}
-.logo{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--wh)}
-.logo b{color:var(--or)}
-.hdate{font-size:10px;font-weight:600;color:rgba(255,255,255,.35)}
+.hdr{background:var(--nv);height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;border-bottom:3px solid var(--or)}
+.logo{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--wh)}
+.logo b{color:var(--or);font-size:14px;letter-spacing:0;vertical-align:-.5px}
+.hdate{font-size:10px;font-weight:600;color:rgba(255,255,255,.4);letter-spacing:.04em}
 
 /* ── QUOTE ── */
 .qstrip{background:var(--nv);padding:11px 16px 13px;border-bottom:1px solid rgba(93,191,176,.2)}
@@ -36,18 +36,18 @@ html,body{background:var(--g1);font-family:var(--f);color:var(--bk);-webkit-font
 .qattr{font-size:.7rem;color:rgba(255,255,255,.3);margin-top:3px}
 
 /* ── PROGRESS (actions only) ── */
-.prog{background:var(--wh);border-bottom:1px solid var(--g2);padding:10px 16px}
+.prog{background:var(--nv);border-bottom:1px solid rgba(255,255,255,.06);padding:9px 16px}
 .prog-inner{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:10px}
-.prog-lbl{font-size:.7rem;font-weight:600;color:var(--g4);white-space:nowrap}
+.prog-lbl{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.5);white-space:nowrap;letter-spacing:.04em}
 .prog-lbl b{color:var(--or)}
-.prog-track{flex:1;height:4px;background:var(--g2);border-radius:100px;overflow:hidden}
+.prog-track{flex:1;height:5px;background:rgba(255,255,255,.12);border-radius:100px;overflow:hidden}
 .prog-fill{height:100%;background:var(--or);border-radius:100px;transition:width .4s ease;width:0%}
 .prog-fill.all{background:var(--tl)}
 
 /* ── TAB SWITCHER ── */
-.tabs{background:var(--wh);border-bottom:2px solid var(--g2);display:flex;max-width:100%;position:sticky;top:46px;z-index:100}
-.tab{flex:1;font-family:var(--f);font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:12px 10px;border:none;background:none;cursor:pointer;color:var(--g4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .18s}
-.tab.on{color:var(--or);border-bottom-color:var(--or)}
+.tabs{background:var(--wh);border-bottom:2px solid var(--g2);display:flex;max-width:100%;position:sticky;top:52px;z-index:100}
+.tab{flex:1;font-family:var(--f);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:13px 10px;border:none;background:none;cursor:pointer;color:var(--g4);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .18s}
+.tab.on{color:var(--nv);border-bottom-color:var(--or);background:rgba(244,122,32,.04)}
 
 /* ── PANELS ── */
 .panel{display:none}
@@ -55,14 +55,14 @@ html,body{background:var(--g1);font-family:var(--f);color:var(--bk);-webkit-font
 .wrap{max-width:640px;margin:0 auto;padding:14px 12px 40px}
 
 /* ── SECTION LABEL ── */
-.sl{font-size:8px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g4);margin:16px 0 8px;display:flex;align-items:center;gap:8px}
-.sl::after{content:'';flex:1;height:1px;background:var(--g2)}
+.sl{font-size:8px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--or);margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.sl::after{content:'';flex:1;height:1px;background:var(--or);opacity:.2}
 .sl:first-child{margin-top:0}
-.sl-n{font-size:8px;font-weight:700;color:var(--or);background:rgba(244,122,32,.1);padding:2px 7px;border-radius:8px}
+.sl-n{font-size:8px;font-weight:700;color:var(--or);background:rgba(244,122,32,.12);padding:2px 7px;border-radius:8px}
 
 /* ── CARD ── */
-.card{background:var(--wh);border:1px solid var(--g2);border-radius:6px;margin-bottom:7px;overflow:hidden;transition:border-color .2s}
-.card.done{border-color:var(--tl);background:var(--ltl)}
+.card{background:var(--wh);border:1px solid var(--g2);border-left:3px solid var(--or);border-radius:6px;margin-bottom:7px;overflow:hidden;transition:border-color .2s}
+.card.done{border-color:var(--tl);border-left-color:var(--tl);background:var(--ltl)}
 .ch{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer}
 .cb{width:22px;height:22px;min-width:22px;border:1.5px solid var(--g3);border-radius:5px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
 .card.done .cb{background:var(--tl);border-color:var(--tl)}
@@ -140,7 +140,8 @@ html,body{background:var(--g1);font-family:var(--f);color:var(--bk);-webkit-font
 .cc.cold{border-left-color:var(--g3)}
 .cc.parked{border-left-color:var(--g2);opacity:.5}
 .cc-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:2px}
-.cc-name{font-size:.85rem;font-weight:700;color:var(--nv);line-height:1.2}
+.cc-name{font-size:.85rem;font-weight:700;color:var(--nv);line-height:1.2;text-decoration:none;border-bottom:1.5px solid rgba(29,52,64,.15);transition:color .15s,border-color .15s}
+.cc-name:hover,.cc-name:active{color:var(--or);border-bottom-color:var(--or)}
 .cc-badge{font-size:7px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:8px;flex-shrink:0;margin-top:2px}
 .b-hot{background:rgba(244,122,32,.12);color:var(--or)}
 .b-warm{background:rgba(184,134,10,.12);color:#b8860a}
@@ -234,9 +235,10 @@ html,body{background:var(--g1);font-family:var(--f);color:var(--bk);-webkit-font
     </div>
     <div class="chips" onclick="event.stopPropagation()">
       <a class="chip" href="https://www.insidehousing.co.uk" target="_blank" rel="noopener">Inside Housing</a>
-      <a class="chip" href="https://www.hsj.co.uk" target="_blank" rel="noopener">HSJ</a>
+      <a class="chip" href="https://www.ft.com" target="_blank" rel="noopener">FT</a>
+      <a class="chip" href="https://www.theguardian.com" target="_blank" rel="noopener">Guardian</a>
+      <a class="chip" href="https://www.bbc.co.uk/news" target="_blank" rel="noopener">BBC News</a>
       <a class="chip" href="https://www.themj.co.uk" target="_blank" rel="noopener">The MJ</a>
-      <a class="chip" href="https://www.edie.net" target="_blank" rel="noopener">EDIE</a>
       <a class="chip" href="https://www.publicfinance.co.uk" target="_blank" rel="noopener">Public Finance</a>
       <a class="chip" href="https://www.civilserviceworld.com" target="_blank" rel="noopener">Civil Service World</a>
     </div>
@@ -543,8 +545,9 @@ function renderC(){
   document.getElementById('cList').innerHTML=list.map(function(c){
     var s=(c.s||'cold').toLowerCase();
     var sub=[c.r,c.o].filter(Boolean).map(esc).join(' \u00b7 ');
+    var sheetUrl='https://docs.google.com/spreadsheets/d/12iRhnjYCYeLHc7onX7HRdwjeDpNjIFjDWoJgRgSiu64/edit#gid=812606877';
     return '<div class="cc '+s+'">'
-      +'<div class="cc-row"><div class="cc-name">'+esc(c.n||'(No name)')+'</div><div class="cc-badge b-'+s+'">'+s+'</div></div>'
+      +'<div class="cc-row"><a class="cc-name" href="'+sheetUrl+'" target="_blank" rel="noopener">'+esc(c.n||'(No name)')+'</a><div class="cc-badge b-'+s+'">'+s+'</div></div>'
       +(sub?'<div class="cc-sub">'+sub+'</div>':'')
       +(c.x?'<div class="cc-next">'+esc(c.x)+'</div>':'')
       +(c.h?'<div class="cc-hist">'+esc(c.h)+'</div>':'')
@@ -560,6 +563,7 @@ document.getElementById('hdate').textContent=DAYS[now.getDay()]+' '+now.getDate(
 (function(){var d=now.getDay(),badge=document.getElementById('liday'),sub=document.getElementById('lisub'),lbl=document.getElementById('li-post-lbl');if(d===1||d===4){badge.textContent='Post day';badge.className='dbadge post';sub.textContent='Today is a posting day \u2014 write and share something valuable.';if(lbl)lbl.textContent='Write and post content today';}else{badge.textContent='Engage';badge.className='dbadge engage';sub.textContent='Engage with your network \u2014 comment, connect, and respond.';}})();
 render();
 loadFromServer();
+/* Poll every 30s so any open device picks up changes from other devices */
 setInterval(loadFromServer, 30000);
 </script>
 </body>
