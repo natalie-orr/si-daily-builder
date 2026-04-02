@@ -152,6 +152,32 @@ html,body{background:var(--g1);font-family:var(--f);color:var(--bk);-webkit-font
 .cc-next::before{content:"→  "}
 .cc-hist{font-size:.68rem;color:var(--g4);line-height:1.5;margin-top:7px;padding-top:7px;border-top:1px solid var(--g2)}
 
+/* ── CALENDAR BUTTON ── */
+.cal-btn{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-family:var(--f);font-size:.68rem;font-weight:700;color:var(--g4);background:var(--g1);border:1px solid var(--g2);border-radius:4px;padding:5px 10px;text-decoration:none;transition:all .15s;cursor:pointer}
+.cal-btn:hover,.cal-btn:active{background:var(--ltl);border-color:var(--tl);color:var(--nv)}
+
+/* ── OPPORTUNITY CARDS ── */
+.oc{background:var(--wh);border:1px solid var(--g2);border-left:3px solid var(--g2);border-radius:5px;padding:13px 14px;margin-bottom:7px}
+.oc.apply{border-left-color:var(--or)}
+.oc.applied{border-left-color:var(--tl)}
+.oc.interview{border-left-color:#8a2be2}
+.oc.won{border-left-color:#1a7a3c}
+.oc.rejected{border-left-color:var(--g3);opacity:.55}
+.oc-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:3px}
+.oc-title{font-size:.85rem;font-weight:700;color:var(--nv);line-height:1.2}
+.oc-badge{font-size:7px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:8px;flex-shrink:0;margin-top:2px}
+.b-apply{background:rgba(244,122,32,.12);color:var(--or)}
+.b-applied{background:var(--ltl);color:#1d6060}
+.b-interview{background:rgba(138,43,226,.1);color:#8a2be2}
+.b-won{background:rgba(26,122,60,.1);color:#1a7a3c}
+.b-rejected{background:var(--g1);color:var(--g3)}
+.oc-sub{font-size:.68rem;color:var(--g4);margin-bottom:6px}
+.oc-deadline{font-size:.7rem;font-weight:600;color:var(--or)}
+.oc-deadline.soon{color:#c0392b}
+.oc-notes{font-size:.68rem;color:var(--g4);line-height:1.5;margin-top:6px;padding-top:6px;border-top:1px solid var(--g2)}
+.apply-btn{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-family:var(--f);font-size:.7rem;font-weight:700;color:var(--wh);background:var(--or);border:none;border-radius:4px;padding:7px 14px;text-decoration:none;transition:background .15s}
+.apply-btn:hover{background:var(--nv)}
+
 /* ── SYNC DOT ── */
 .sync{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.15);transition:background .4s;margin-left:8px;display:inline-block;flex-shrink:0}
 .sync.ok{background:#1a6b35}
@@ -200,6 +226,7 @@ html,body{background:var(--g1);font-family:var(--f);color:var(--bk);-webkit-font
 <div class="tabs">
   <button class="tab on" id="tab-actions"   onclick="showTab('actions')">&#9989; Actions</button>
   <button class="tab"    id="tab-prospects" onclick="showTab('prospects')">&#11088; Prospects</button>
+  <button class="tab"    id="tab-opps"      onclick="showTab('opps')">&#128218; Opportunities</button>
 </div>
 
 <!-- ── ACTIONS PANEL ────────────────────────────────────────────── -->
@@ -286,23 +313,24 @@ html,body{background:var(--g1);font-family:var(--f);color:var(--bk);-webkit-font
     </div>
   </div>
 
-  <!-- Pipeline -->
-  <div class="card" id="c-pipeline">
-    <div class="ch" onclick="toggleCard('pipeline')">
+  <!-- Applications -->
+  <div class="card" id="c-applications">
+    <div class="ch" onclick="toggleCard('applications')">
       <div class="cb"><span class="ck">✓</span></div>
       <div class="ct">
-        <div class="ct-title">Pipeline review</div>
-        <div class="ct-sub">Your pipeline reflects activity from 90 days ago. Keep it current.</div>
+        <div class="ct-title">Review applications</div>
+        <div class="ct-sub">Keep your opportunities moving — check, chase, and update.</div>
       </div>
     </div>
     <div class="div"></div>
     <div class="stasks" onclick="event.stopPropagation()">
-      <div class="st" id="s-pl-hot"    onclick="toggleSub('pipeline','hot')">   <div class="scb"><span class="sk">✓</span></div><div class="sl2">Review hot prospects — any action needed?</div></div>
-      <div class="st" id="s-pl-update" onclick="toggleSub('pipeline','update')"><div class="scb"><span class="sk">✓</span></div><div class="sl2">Update pipeline status for new developments</div></div>
+      <div class="st" id="s-ap-check"    onclick="toggleSub('applications','check')">   <div class="scb"><span class="sk">✓</span></div><div class="sl2">Check for new roles or tenders to apply for</div></div>
+      <div class="st" id="s-ap-followup" onclick="toggleSub('applications','followup')"><div class="scb"><span class="sk">✓</span></div><div class="sl2">Follow up on any submitted applications</div></div>
+      <div class="st" id="s-ap-update"   onclick="toggleSub('applications','update')">  <div class="scb"><span class="sk">✓</span></div><div class="sl2">Update status in Opportunities tracker</div></div>
     </div>
-    <div class="pl-link" onclick="showTab('prospects');event.stopPropagation()" style="cursor:pointer">
+    <div class="pl-link" onclick="showTab('opps');event.stopPropagation()" style="cursor:pointer">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      View your pipeline →
+      View your opportunities →
     </div>
   </div>
 
@@ -333,6 +361,26 @@ html,body{background:var(--g1);font-family:var(--f);color:var(--bk);-webkit-font
   </a>
 </div>
 </div><!-- /prospects panel -->
+
+<!-- ── OPPORTUNITIES PANEL ──────────────────────────────────────────── -->
+<div class="panel" id="panel-opps">
+<div class="wrap">
+  <div class="sl">Roles &amp; tenders <span class="sl-n" id="oppCount"></span></div>
+  <input class="search-box" id="oppSearch" type="search" placeholder="Search role or organisation…" oninput="filterOpps()">
+  <div class="filters">
+    <button class="fb on"  id="ob-all"       onclick="setOF('all')">All</button>
+    <button class="fb"     id="ob-apply"     onclick="setOF('apply')">To apply</button>
+    <button class="fb"     id="ob-applied"   onclick="setOF('applied')">Applied</button>
+    <button class="fb"     id="ob-interview" onclick="setOF('interview')">Interview</button>
+    <button class="fb"     id="ob-won"       onclick="setOF('won')">Won</button>
+  </div>
+  <div class="clist" id="oppList"><div class="msg">Loading opportunities…</div></div>
+  <a class="gs-btn" href="https://docs.google.com/spreadsheets/d/12iRhnjYCYeLHc7onX7HRdwjeDpNjIFjDWoJgRgSiu64/edit" target="_blank" rel="noopener">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Edit opportunities in Google Sheets
+  </a>
+</div>
+</div><!-- /opps panel -->
 
 <script>
 /* ── QUOTES ── */
@@ -381,9 +429,9 @@ function ss(k,v){try{localStorage.setItem(sk(k),JSON.stringify(v));}catch(e){}}
 var cards = sg('cards')||{};
 var subs  = sg('subs') ||{};
 var note  = sg('note') ||'';
-var SUB_MAP={linkedin:['post','comment','connect','messages'],outreach:['warm','brief','cold'],pipeline:['hot','update']};
-var ABBREV={linkedin:'li',outreach:'or',pipeline:'pl'};
-var CARD_IDS=['intention','news','linkedin','outreach','pipeline'];
+var SUB_MAP={linkedin:['post','comment','connect','messages'],outreach:['warm','brief','cold'],applications:['check','followup','update']};
+var ABBREV={linkedin:'li',outreach:'or',applications:'ap'};
+var CARD_IDS=['intention','news','linkedin','outreach','applications'];
 
 /* ── TABS ── */
 function showTab(t){
@@ -394,6 +442,71 @@ function showTab(t){
   document.getElementById('progBar').style.display = t==='actions'?'block':'none';
   window.scrollTo(0,0);
   if(t==='prospects' && !contactsLoaded) loadContacts();
+  if(t==='opps' && !oppsLoaded) loadOpps();
+}
+
+/* ── CALENDAR LINK ── */
+function calUrl(name, next) {
+  var d = new Date();
+  d.setDate(d.getDate() + 14);
+  d.setHours(9,0,0,0);
+  var e = new Date(d.getTime() + 30*60000);
+  function fmt(dt){
+    return dt.getFullYear()+
+      String(dt.getMonth()+1).padStart(2,'0')+
+      String(dt.getDate()).padStart(2,'0')+'T'+
+      String(dt.getHours()).padStart(2,'0')+
+      String(dt.getMinutes()).padStart(2,'0')+'00';
+  }
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+    +'&text='+encodeURIComponent('Follow up \u2014 '+(name||''))
+    +'&dates='+fmt(d)+'/'+fmt(e)
+    +(next?'&details='+encodeURIComponent('Next action: '+next):'');
+}
+
+/* ── OPPORTUNITIES ── */
+var allOpps=[]; var activeOF='all'; var oppSearchQ=''; var oppsLoaded=false;
+function loadOpps(){
+  fetch('/api/opportunities')
+    .then(function(r){return r.json();})
+    .then(function(j){
+      if(!j.rows) throw new Error('No data');
+      allOpps=j.rows; oppsLoaded=true; renderOpps();
+    })
+    .catch(function(err){
+      document.getElementById('oppList').innerHTML='<div class="err"><b>Could not load opportunities</b>Check your Opportunities sheet tab exists and has the correct headers.<span class="err-detail">'+esc(err.message)+'</span></div>';
+    });
+}
+function setOF(f){activeOF=f;document.querySelectorAll('[id^="ob-"]').forEach(function(b){b.classList.remove('on');});document.getElementById('ob-'+f).classList.add('on');renderOpps();}
+function filterOpps(){oppSearchQ=document.getElementById('oppSearch').value.toLowerCase().trim();renderOpps();}
+function daysUntil(dstr){
+  if(!dstr) return null;
+  var d=new Date(dstr); if(isNaN(d)) return null;
+  return Math.round((d-new Date())/(1000*60*60*24));
+}
+function renderOpps(){
+  var list=allOpps;
+  if(activeOF!=='all') list=list.filter(function(o){return(o.s||'apply').toLowerCase()===activeOF;});
+  if(oppSearchQ) list=list.filter(function(o){return(o.t||'').toLowerCase().indexOf(oppSearchQ)>=0||(o.o||'').toLowerCase().indexOf(oppSearchQ)>=0;});
+  document.getElementById('oppCount').textContent=list.length;
+  if(!list.length){document.getElementById('oppList').innerHTML='<div class="msg">No opportunities match.</div>';return;}
+  document.getElementById('oppList').innerHTML=list.map(function(o){
+    var s=(o.s||'apply').toLowerCase();
+    var days=daysUntil(o.d);
+    var dlHtml='';
+    if(o.d){
+      var soon=days!==null&&days<=7;
+      var dlTxt=days===null?o.d:days<0?'Deadline passed':days===0?'Deadline today':'Deadline in '+days+' day'+(days===1?'':'s');
+      dlHtml='<div class="oc-deadline'+(soon?' soon':'')+'">⏰ '+esc(dlTxt)+'</div>';
+    }
+    return '<div class="oc '+s+'">'
+      +'<div class="oc-row"><div class="oc-title">'+esc(o.t||'(No title)')+'</div><div class="oc-badge b-'+s+'">'+s+'</div></div>'
+      +(o.o?'<div class="oc-sub">'+esc(o.o)+'</div>':'')
+      +dlHtml
+      +(o.u?'<a class="apply-btn" href="'+esc(o.u)+'" target="_blank" rel="noopener">Apply →</a>':'')
+      +(o.n?'<div class="oc-notes">'+esc(o.n)+'</div>':'')
+      +'</div>';
+  }).join('');
 }
 
 /* ── ACTIONS ── */
@@ -478,8 +591,8 @@ function loadFromServer(){
 }
 
 function exportLog(){
-  var LABELS={intention:'Set your intention',news:'Scan industry news',linkedin:'LinkedIn',outreach:'Outreach & follow-ups',pipeline:'Pipeline review'};
-  var SLABELS={linkedin_post:'Post or share content',linkedin_comment:'Comment on 3 posts',linkedin_connect:'Send 2 connection requests',linkedin_messages:'Check messages',outreach_warm:'Follow up warm lead',outreach_brief:'Follow up on brief',outreach_cold:'New outreach contact',pipeline_hot:'Review hot prospects',pipeline_update:'Update pipeline status'};
+  var LABELS={intention:'Set your intention',news:'Scan industry news',linkedin:'LinkedIn',outreach:'Outreach & follow-ups',applications:'Review applications'};
+  var SLABELS={linkedin_post:'Post or share content',linkedin_comment:'Comment on 3 posts',linkedin_connect:'Send 2 connection requests',linkedin_messages:'Check messages',outreach_warm:'Follow up warm lead',outreach_brief:'Follow up on brief',outreach_cold:'New outreach contact',applications_check:'Check for new roles or tenders',applications_followup:'Follow up on submitted applications',applications_update:'Update status in Opportunities tracker'};
   var lines=['STRATEGY + IMPACT \u2014 DAILY NEW BUSINESS LOG',DAYS[now.getDay()]+' '+now.getDate()+' '+MONTHS[now.getMonth()]+' '+now.getFullYear(),'','CHECKLIST','\u2500'.repeat(42)];
   CARD_IDS.forEach(function(id){
     lines.push((cards[id]?'[\u2713]':'[ ]')+' '+LABELS[id]);
@@ -551,6 +664,7 @@ function renderC(){
       +(sub?'<div class="cc-sub">'+sub+'</div>':'')
       +(c.x?'<div class="cc-next">'+esc(c.x)+'</div>':'')
       +(c.h?'<div class="cc-hist">'+esc(c.h)+'</div>':'')
+      +'<a class="cal-btn" href="'+esc(calUrl(c.n,c.x))+'" target="_blank" rel="noopener">&#128197; Add follow-up reminder</a>'
       +'</div>';
   }).join('');
 }
